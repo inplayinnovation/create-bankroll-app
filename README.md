@@ -1,9 +1,9 @@
-# create-bankroll-app
+# @joinbankroll/create-app
 
 Scaffold a [Built for Bankroll](https://joinbankroll.com/build) app.
 
 ```bash
-npm create bankroll-app@latest my-app
+npm create @joinbankroll/app@latest my-app
 cd my-app
 npm run bankroll
 ```

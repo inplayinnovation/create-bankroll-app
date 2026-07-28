@@ -1,6 +1,6 @@
-// create-bankroll-app — scaffold a Built for Bankroll app.
+// @joinbankroll/create-app — scaffold a Built for Bankroll app.
 //
-//   npm create bankroll-app@latest my-app
+//   npm create @joinbankroll/app@latest my-app
 //
 // Downloads the template rather than bundling a copy of it. bankroll-starter is
 // a real app that gets built and run, so shipping a second copy inside this
@@ -46,7 +46,7 @@ function usage(): void {
   console.log(`
   Create a Built for Bankroll app.
 
-    npm create bankroll-app@latest my-app
+    npm create @joinbankroll/app@latest my-app
 
   Options
     -t, --template <ref>   template branch or tag (default: ${DEFAULT_REF})

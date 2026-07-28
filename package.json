@@ -1,5 +1,5 @@
 {
-  "name": "create-bankroll-app",
+  "name": "@joinbankroll/create-app",
   "version": "0.1.0",
   "description": "Create a Built for Bankroll app",
   "license": "MIT",
@@ -34,5 +34,8 @@
     "prepack": "npm run build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
