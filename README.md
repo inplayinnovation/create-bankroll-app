@@ -8,6 +8,9 @@ cd my-app
 npm run bankroll
 ```
 
+`npm create bankroll-app@latest` works too — it is a published alias that
+forwards here, kept because it is what a developer guesses.
+
 `npm run bankroll` raises a public tunnel and prints a QR code. Scan it and your
 app opens inside Bankroll on your phone, which is the only place it runs — the
 host holds the user's money, identity, and location, and refuses any origin that
