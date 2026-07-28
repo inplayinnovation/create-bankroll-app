@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { IGNORABLE, parse } from '../src/index';
+import { IGNORABLE, parse } from '../src/args';
 
 describe('parse', () => {
   it('defaults to the main template', () => {

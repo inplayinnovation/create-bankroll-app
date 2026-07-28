@@ -15,32 +15,14 @@ import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:
 import { basename, resolve } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 
-const TEMPLATE_REPO = 'inplayinnovation/bankroll-starter';
-const DEFAULT_REF = 'main';
-const DOWNLOAD_TIMEOUT_MS = 60_000;
-
-const ENV_FILE = '.env.local';
-// A directory holding only these is still empty enough to scaffold into — they
-// are what an editor or the OS leaves behind, not someone's work.
-export const IGNORABLE = new Set(['.DS_Store', '.git', '.gitkeep', '.idea', '.vscode', 'Thumbs.db']);
-
-export interface Args {
-  directory?: string;
-  ref: string;
-  help: boolean;
-}
-
-export function parse(argv: string[]): Args {
-  const args: Args = { ref: DEFAULT_REF, help: false };
-  for (let i = 0; i < argv.length; i++) {
-    const arg = argv[i];
-    if (arg === '--help' || arg === '-h') args.help = true;
-    else if (arg === '--template' || arg === '-t') args.ref = argv[++i] ?? DEFAULT_REF;
-    else if (arg?.startsWith('-')) throw new Error(`Unknown option ${arg}`);
-    else if (arg && !args.directory) args.directory = arg;
-  }
-  return args;
-}
+import {
+  DEFAULT_REF,
+  DOWNLOAD_TIMEOUT_MS,
+  ENV_FILE,
+  IGNORABLE,
+  parse,
+  TEMPLATE_REPO,
+} from './args';
 
 function usage(): void {
   console.log(`
@@ -165,12 +147,9 @@ async function main(): Promise<void> {
 `);
 }
 
-// Only when executed, so importing this module in a test does not scaffold.
-if (process.argv[1] && import.meta.url.endsWith(basename(process.argv[1]))) {
-  try {
-    await main();
-  } catch (error) {
-    console.error(`\n  ${error instanceof Error ? error.message : String(error)}\n`);
-    process.exit(1);
-  }
+try {
+  await main();
+} catch (error) {
+  console.error(`\n  ${error instanceof Error ? error.message : String(error)}\n`);
+  process.exit(1);
 }
