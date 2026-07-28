@@ -21,6 +21,7 @@ import {
   ENV_FILE,
   IGNORABLE,
   parse,
+  PUBLIC_MAINNET_RPC,
   TEMPLATE_REPO,
 } from './args';
 
@@ -97,6 +98,7 @@ async function main(): Promise<void> {
   }
 
   const name = await ask('App name', basename(target));
+  const rpc = await ask('Solana RPC', PUBLIC_MAINNET_RPC);
 
   console.log(`\n  Downloading the template…`);
   try {
@@ -123,6 +125,11 @@ async function main(): Promise<void> {
       '',
       '# Shown when someone connects the app.',
       `BANKROLL_APP_NAME=${name}`,
+      '',
+      '# The public endpoint is rate-limited — confirming a payout against it',
+      '# takes tens of seconds. Any provider works; this is the one thing here',
+      '# worth upgrading.',
+      `SOLANA_RPC_URL=${rpc}`,
       '',
     ].join('\n'),
   );

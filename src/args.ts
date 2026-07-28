@@ -9,6 +9,15 @@ export const DEFAULT_REF = 'main';
 export const DOWNLOAD_TIMEOUT_MS = 60_000;
 
 export const ENV_FILE = '.env.local';
+
+/**
+ * Solana's public endpoint. Enough to develop against and the only one that
+ * needs no account — but it rate-limits, and confirming a payout against it
+ * takes tens of seconds rather than one. Offered as a default so a scaffold
+ * never stops for it, and asked about so the choice is made rather than
+ * discovered later.
+ */
+export const PUBLIC_MAINNET_RPC = 'https://api.mainnet-beta.solana.com';
 // A directory holding only these is still empty enough to scaffold into — they
 // are what an editor or the OS leaves behind, not someone's work.
 export const IGNORABLE = new Set([
