@@ -1,0 +1,38 @@
+{
+  "name": "create-bankroll-app",
+  "version": "0.1.0",
+  "description": "Create a Built for Bankroll app",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inplayinnovation/create-bankroll-app.git"
+  },
+  "homepage": "https://joinbankroll.com/build",
+  "type": "module",
+  "bin": {
+    "create-bankroll-app": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20.6"
+  },
+  "keywords": [
+    "bankroll",
+    "solana",
+    "create"
+  ],
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsup": "^8.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "prepack": "npm run build",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  }
+}
