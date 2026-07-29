@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { IGNORABLE, parse } from '../src/args';
+import { IGNORABLE, parse, shouldStart } from '../src/args';
 
 describe('parse', () => {
   it('defaults to the main template', () => {
-    expect(parse(['my-app'])).toEqual({ directory: 'my-app', ref: 'main', help: false });
+    expect(parse(['my-app'])).toEqual({ directory: 'my-app', ref: 'main', help: false, noStart: false });
   });
 
   it('takes a directory', () => {
@@ -43,5 +43,23 @@ describe('IGNORABLE', () => {
 
   it.each(['src', 'package.json', 'README.md'])('does not ignore %s', (entry) => {
     expect(IGNORABLE.has(entry)).toBe(false);
+  });
+});
+
+describe('shouldStart', () => {
+  const args = (noStart: boolean) => ({ ref: 'main', help: false, noStart });
+
+  // The QR is the point, so it runs the app by default.
+  it('starts when there is a terminal', () => {
+    expect(shouldStart(args(false), true)).toBe(true);
+  });
+
+  // A CI run should scaffold and exit, not sit on a server nobody is watching.
+  it('does not start without one', () => {
+    expect(shouldStart(args(false), false)).toBe(false);
+  });
+
+  it('does not start when asked not to', () => {
+    expect(shouldStart(args(true), true)).toBe(false);
   });
 });

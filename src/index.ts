@@ -22,6 +22,7 @@ import {
   IGNORABLE,
   parse,
   PUBLIC_MAINNET_RPC,
+  shouldStart,
   TEMPLATE_REPO,
 } from './args';
 
@@ -33,6 +34,7 @@ function usage(): void {
 
   Options
     -t, --template <ref>   template branch or tag (default: ${DEFAULT_REF})
+        --no-start         scaffold only; do not start the dev server
     -h, --help             show this
 `);
 }
@@ -135,7 +137,10 @@ async function main(): Promise<void> {
   );
 
   console.log(`  Installing dependencies…\n`);
-  run('npm', ['install'], target);
+  // npm's audit summary and funding pitch are a dozen lines of noise in the
+  // middle of a scaffold, and neither is actionable at this moment — a fresh
+  // app has made no choices to audit. `npm audit` still works afterwards.
+  run('npm', ['install', '--no-audit', '--no-fund', '--loglevel=error'], target);
 
   // Its own history, and no upstream remote: there is nothing to merge back.
   if (tryRun('git', ['init', '-q'], target)) {
@@ -143,15 +148,28 @@ async function main(): Promise<void> {
     tryRun('git', ['commit', '-qm', 'Initial commit from create-bankroll-app'], target);
   }
 
+  // Starting it here rather than printing two more commands: the QR is the
+  // whole point, and it was two steps away for no reason.
+  const start = shouldStart(args, Boolean(process.stdin.isTTY));
+
   console.log(`
   ${name} is ready.
-
+${
+  start
+    ? `
+  Starting it now. Scan the QR to open it inside Bankroll on your phone.
+  Ctrl-C to stop — then \`cd ${directory}\` and \`npm run bankroll\` to pick it up again.
+`
+    : `
     cd ${directory}
     npm run bankroll     tunnel + QR — scan it to open the app inside Bankroll
-
+`
+}
   Your app runs inside Bankroll, so a phone is how you see it. Everything that
   is not your app comes from @joinbankroll/sdk and updates with npm update.
 `);
+
+  if (start) run('npm', ['run', 'bankroll'], target);
 }
 
 try {

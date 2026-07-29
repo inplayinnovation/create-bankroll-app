@@ -33,16 +33,28 @@ export interface Args {
   directory?: string;
   ref: string;
   help: boolean;
+  /** Scaffold only — do not start the dev server afterwards. */
+  noStart: boolean;
 }
 
 export function parse(argv: string[]): Args {
-  const args: Args = { ref: DEFAULT_REF, help: false };
+  const args: Args = { ref: DEFAULT_REF, help: false, noStart: false };
   for (let i = 0; i < argv.length; i++) {
     const arg = argv[i];
     if (arg === '--help' || arg === '-h') args.help = true;
+    else if (arg === '--no-start') args.noStart = true;
     else if (arg === '--template' || arg === '-t') args.ref = argv[++i] ?? DEFAULT_REF;
     else if (arg?.startsWith('-')) throw new Error(`Unknown option ${arg}`);
     else if (arg && !args.directory) args.directory = arg;
   }
   return args;
 }
+
+/**
+ * Whether to run the app after scaffolding.
+ *
+ * The QR is the whole point, so it starts by default — but only with a terminal
+ * attached. A CI run should scaffold and exit, not sit on a dev server nobody
+ * is watching.
+ */
+export const shouldStart = (args: Args, isTTY: boolean): boolean => isTTY && !args.noStart;
