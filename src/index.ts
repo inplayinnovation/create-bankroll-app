@@ -158,18 +158,18 @@ ${
   start
     ? `
   Starting it now. Scan the QR to open it inside Bankroll on your phone.
-  Ctrl-C to stop — then \`cd ${directory}\` and \`npm run bankroll\` to pick it up again.
+  Ctrl-C to stop — then \`cd ${directory}\` and \`npm run dev\` to pick it up again.
 `
     : `
     cd ${directory}
-    npm run bankroll     tunnel + QR — scan it to open the app inside Bankroll
+    npm run dev          tunnel + QR — scan it to open the app inside Bankroll
 `
 }
   Your app runs inside Bankroll, so a phone is how you see it. Everything that
   is not your app comes from @joinbankroll/sdk and updates with npm update.
 `);
 
-  if (start) run('npm', ['run', 'bankroll'], target);
+  if (start) run('npm', ['run', 'dev'], target);
 }
 
 try {
