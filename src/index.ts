@@ -22,7 +22,6 @@ import {
   IGNORABLE,
   parse,
   PUBLIC_MAINNET_RPC,
-  shouldStart,
   TEMPLATE_REPO,
 } from './args';
 
@@ -34,21 +33,8 @@ function usage(): void {
 
   Options
     -t, --template <ref>   template branch or tag (default: ${DEFAULT_REF})
-        --no-start         scaffold only; do not start the dev server
     -h, --help             show this
 `);
-}
-
-/** Enter accepts. Anything starting with n declines. */
-async function confirm(question: string): Promise<boolean> {
-  if (!process.stdin.isTTY) return false;
-  const rl = createInterface({ input: process.stdin, output: process.stdout });
-  try {
-    const answer = (await rl.question(`  ${question} (Y/n) `)).trim().toLowerCase();
-    return !answer.startsWith('n');
-  } finally {
-    rl.close();
-  }
 }
 
 async function ask(question: string, fallback: string): Promise<string> {
@@ -66,26 +52,6 @@ function run(command: string, args: string[], cwd: string): void {
   const result = spawnSync(command, args, { cwd, stdio: 'inherit' });
   if (result.error) throw result.error;
   if (result.status !== 0) throw new Error(`${command} ${args.join(' ')} failed`);
-}
-
-/**
- * Hand the terminal to the dev server until the developer stops it.
- *
- * Unlike run(), a non-zero exit is not a failure here: Ctrl-C is how you leave
- * a dev server, and it returns 130. Treating that as an error ended the scaffold
- * with "npm run dev failed" on the ordinary way out.
- *
- * SIGINT is trapped so Ctrl-C reaches the child and stops it, rather than
- * killing this process too — which would take the closing instructions with it.
- */
-function handOver(command: string, args: string[], cwd: string): void {
-  const ignore = () => {};
-  process.on('SIGINT', ignore);
-  try {
-    spawnSync(command, args, { cwd, stdio: 'inherit' });
-  } finally {
-    process.off('SIGINT', ignore);
-  }
 }
 
 /** Quietly — a failure here is not worth stopping a scaffold over. */
@@ -180,38 +146,15 @@ async function main(): Promise<void> {
     tryRun('git', ['commit', '-qm', 'Initial commit from create-bankroll-app'], target);
   }
 
-  const nextSteps = `
+  console.log(`
+  ${name} is ready.
+
     cd ${directory}
     npm run dev          tunnel + QR — scan it to open the app inside Bankroll
 
   Your app runs inside Bankroll, so a phone is how you see it. Everything that
   is not your app comes from @joinbankroll/sdk and updates with npm update.
-`;
-
-  console.log(`\n  ${name} is ready.\n`);
-
-  if (!shouldStart(args, Boolean(process.stdin.isTTY))) {
-    console.log(nextSteps);
-    return;
-  }
-
-  // Asked rather than assumed. Almost nothing in this ecosystem starts a server
-  // for you, and the one thing that does — create-vite — asks first. Here the
-  // question earns its keystroke: the first run downloads cloudflared, opens a
-  // publicly reachable tunnel to this machine, and generates a signing key that
-  // becomes a token's mint authority. None of that is what `npm create` implies.
-  console.log(`  Pass --no-start to skip this.\n`);
-  if (!(await confirm('Start it now, and print a QR to open it on your phone?'))) {
-    console.log(nextSteps);
-    return;
-  }
-
-  handOver('npm', ['run', 'dev'], target);
-
-  // After the child, not before: started first, this scrolls away under npm's
-  // output, Next's boot and a forty-line QR — and it is wanted at the end, when
-  // the developer has stopped the server and is back in the parent directory.
-  console.log(nextSteps);
+`);
 }
 
 try {
